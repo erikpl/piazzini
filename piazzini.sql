@@ -1,3 +1,8 @@
+DROP database piazzini;
+CREATE database piazzini;
+USE piazzini
+
+
 CREATE TABLE piazza_user (
   email      		VARCHAR(50) NOT NULL,
   first_name 		TEXT NOT NULL,
@@ -189,7 +194,8 @@ CREATE TABLE post_read (
 
 
 insert into piazza_user values("audunrb@icloud.com", "audun", "bøe", "passord");
-insert into tag values(DEFAULT, "tag");
+insert into piazza_user values("erikpl@protonmail.com", "erik", "løvaas", "abc123");
+insert into tag values(DEFAULT, "Question");
 
 insert into course values(DEFAULT, "database og datamodellering", 'spring', true);
 insert into folder values(DEFAULT, "folder", LAST_INSERT_ID());
