@@ -5,10 +5,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 
 public class CommandLineInterface {
-    private String current_user_email;
-    private String current_course_id;
-    // Update this attribute when either email or course_id change
-    private boolean isInstructor;
     private BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
 
     // Return 0 for OK
