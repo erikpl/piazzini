@@ -1,7 +1,19 @@
-DROP database piazzini;
-CREATE database piazzini;
-USE piazzini
-
+/*
+	Change after changing DB scheme to reflect foreign key bug.
+*/
+DROP TABLE piazza_user;
+DROP TABLE course;
+DROP TABLE folder;
+DROP TABLE tag;
+DROP TABLE thread;
+DROP TABLE post;
+DROP TABLE gives_good_comment;
+DROP TABLE post_in_folder;
+DROP TABLE post_has_tag;
+DROP TABLE is_instructor;
+DROP TABLE tag_in_course;
+DROP TABLE main_post;
+DROP TABLE post_read;
 
 CREATE TABLE piazza_user (
   email      		VARCHAR(50) NOT NULL,
@@ -212,7 +224,3 @@ Forslag 2:
 La post og thread id = nullable, insert først en post med nullverdier ->
 lag en thread med denne posten -> lag en ny post i denne threaden. 
 */
-
-
-
-
