@@ -86,7 +86,8 @@ public class CommandLineInterface {
     }
 
     // A student logs into the system, i.e., check user name
-    // and password. No encryption
+    // and password. No encryption.
+    // TODO: implement
     private int handleLogin() {
         System.out.println("Handling login...");
         return 0;
@@ -94,6 +95,7 @@ public class CommandLineInterface {
 
     // A student makes a post belonging to the folder “Exam” and
     // tagged with “Question”.
+    // TODO: implement
     private int handleMakePost() {
         System.out.println("Creating post...");
         return 0;
@@ -102,6 +104,7 @@ public class CommandLineInterface {
     // An instructor replies to a post belonging to the folder
     // “Exam”. The input to this is the id of the post replied to.
     // This could be the post created in use case 2.
+    // TODO: implement
     private int handleInstructorReply() {
         System.out.println("Replying as instructor...");
         return 0;
@@ -110,6 +113,7 @@ public class CommandLineInterface {
     // A student searches for posts with a specific keyword “WAL”.
     // The return value of this should be a list of ids of posts
     // matching the keyword.
+    // TODO: implement
     private int handlePostSearch() {
         System.out.println("Searching post...");
         return 0;
@@ -117,11 +121,13 @@ public class CommandLineInterface {
 
     // An instructor views statistics for users and how many post
     // they have read and how
+    // TODO: implement
     private int handleViewStatistics() {
         System.out.println("Viewing stats...");
         return 0;
     }
 
+    // TODO: implement similar functionality in a dedicated class
     public static void main(String... args) {
         int state = 0;
         CommandLineInterface cli = new CommandLineInterface();
