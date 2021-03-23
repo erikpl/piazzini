@@ -1,3 +1,6 @@
+create database piazzadatabase;
+use piazzadatabase;
+
 drop table gives_good_comment;
 drop table post_in_folder;
 drop table post_has_tag;
