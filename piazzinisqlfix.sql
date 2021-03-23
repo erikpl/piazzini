@@ -1,3 +1,20 @@
+drop table gives_good_comment;
+drop table post_in_folder;
+drop table post_has_tag;
+drop table is_instructor;
+drop table tag_in_course;
+drop table main_post;
+drop table post_read;
+
+drop table post;
+drop table thread;
+drop table folder;
+drop table tag;
+drop table course;
+drop table piazza_user;
+
+
+
 CREATE TABLE piazza_user (
   email      		VARCHAR(50) NOT NULL,
   first_name 		TEXT NOT NULL,
