@@ -194,7 +194,7 @@ INSERT INTO piazza_user VALUES("amart@ladmail.com", "amar", "taso", "test123");
 INSERT INTO tag VALUES(DEFAULT, "Question");
 INSERT INTO course VALUES(DEFAULT, "database og datamodellering", 'spring', true);
 INSERT INTO folder VALUES(DEFAULT, "folder3", 1);
-INSERT INTO FOLDER VALUES(DEFAULT, "folder2", 1);
+INSERT INTO folder VALUES(DEFAULT, "folder2", 1);
 INSERT INTO post VALUES(DEFAULT, "beskrivelse", TRUE, NOW(), 'audunrb@icloud.com', NULL, NULL);
 INSERT INTO thread VALUES(DEFAULT, "tittel", 1 , 1);
 INSERT INTO post VALUES(DEFAULT, 'boyo', TRUE, NOW(), "erikpl@protonmail.com", 1, NULL);
