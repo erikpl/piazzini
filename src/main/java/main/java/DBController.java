@@ -10,8 +10,9 @@ public class DBController {
     private Connection connection;
     private String current_user_email;
     private String current_course_id;
-    // Update this attribute when either email or course_id change
-    private boolean isInstructor;
+    private String studentThreadId;
+    private String studentPostId;
+    // TODO: determine how to manage Instructor privileges
 
     // Empty constructor
     public DBController() {
@@ -60,5 +61,39 @@ public class DBController {
             e.printStackTrace();
             return -1;
         }
+    }
+
+    // TODO: determine if folderId should be an int instead of a String
+    // TODO: implement
+    // User email and current course is stored as a class variable
+    // Return -1 for exception
+    // Return 0 for successful thread creation
+    // Return 1 for invalid folderId
+    public int newThreadAsStudent(String folderId, String postDescription, String threadTitle) {
+        // 1. create Thread with threadTitle.
+        // 2. retrieve threadId of the created thread (set automatically).
+        // 3. create Post using threadId and postDescription. Last_edited auto-update.
+        // 4. retrieve post_id of created Post.
+        // 5. update the post_id of the created Thread to make the created post the main post.
+        // 6. create PostInFolder using the folderId and postId.
+        // 7. create MainPost entry (may make other parts of this code redundant).
+    }
+
+    // TODO: implement
+    // Return -1 for exception
+    // Return 0 for successful thread reply
+    // Return 1 for invalid threadId
+    public int replyToThreadAsInstructor(String postDescription) {
+        // 1. log in as an Instructor.
+        // 2. create Post using postDescription and the postId + threadId stored as a class variable.
+        // 3. set created Post as Instructor's answer (Thread attribute).
+    }
+
+    // Return -1 for exception
+    // Return 0 for successful search
+    // Return 1 for empty result
+    // TODO: determine if 1 for empty result is the ideal method
+    public int searchForPostByKeyword(String keyword) {
+        // 1.
     }
 }
