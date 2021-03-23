@@ -1,5 +1,5 @@
-create database piazzadatabase;
-use piazzadatabase;
+create database piazzini;
+use piazzini;
 
 drop table gives_good_comment;
 drop table post_in_folder;
