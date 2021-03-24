@@ -6,6 +6,17 @@ import java.io.InputStreamReader;
 
 public class CommandLineInterface {
     private BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
+    private DBController dbController = new DBController();
+    private String studentEmail = "audunrb@icloud.com";
+    private String studentPassword = "passord";
+    private String instructorEmail = "erikpl@protonmail.com";
+    private String instructorPassword = "abc123";
+    private int examFolderId = 1;
+    private int courseId = 1;
+    private String postDescription = "Hello! Can you pls explain 4NF? Don't get it :(";
+    private String threadTitle = "Q: Stuck on 4NF";
+    private String replyDescription = "No MVDs!";
+    private String keywordPattern = "%WAL%";
 
     // Return 0 for OK
     // Return -1 for invalid
@@ -83,18 +94,26 @@ public class CommandLineInterface {
 
     // A student logs into the system, i.e., check user name
     // and password. No encryption.
+    // Return 0 for successful login.
+    // Return -1 for exception
     // TODO: implement
     private int handleLogin() {
-        System.out.println("Handling login...");
-        return 0;
+        try {
+            this.dbController.userLogin(this.studentEmail, this.studentPassword);
+            return 0;
+        }
+        catch (Exception e) {
+            return -1;
+        }
     }
 
     // A student makes a post belonging to the folder “Exam” and
     // tagged with “Question”.
     // TODO: implement
     private int handleMakePost() {
-        System.out.println("Creating post...");
-        return 0;
+        try {
+
+        }
     }
 
     // An instructor replies to a post belonging to the folder
