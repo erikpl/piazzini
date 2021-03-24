@@ -55,7 +55,8 @@ CREATE TABLE thread (
   thread_id     INT UNSIGNED AUTO_INCREMENT NOT NULL,
   title         TEXT NOT NULL,
   course_id	INT UNSIGNED NOT NULL,
-  post_id 	INT UNSIGNED,
+  student_answer_id 	INT UNSIGNED,
+  instructor_answer_id  INT UNSIGNED,
   PRIMARY KEY (thread_id)
 );
 
@@ -86,12 +87,12 @@ CREATE TABLE post (
 );
 
 ALTER TABLE thread
-  ADD CONSTRAINT student_answer FOREIGN KEY (post_id)
+  ADD CONSTRAINT student_answer FOREIGN KEY (student_answer_id)
   REFERENCES post(post_id)
     ON DELETE CASCADE
     ON UPDATE CASCADE,
     
-  ADD CONSTRAINT instructor_answer FOREIGN KEY (post_id)
+  ADD CONSTRAINT instructor_answer FOREIGN KEY (instructor_answer_id)
   REFERENCES post(post_id)
     ON DELETE CASCADE
     ON UPDATE CASCADE,
@@ -211,10 +212,10 @@ CREATE TABLE post_read (
 INSERT INTO piazza_user VALUES("audunrb@icloud.com", "audun", "bøe", "passord");
 INSERT INTO piazza_user VALUES("erikpl@protonmail.com", "erik", "løvaas", "abc123");
 INSERT INTO piazza_user VALUES("amart@ladmail.com", "amar", "taso", "test123");
-INSERT INTO tag VALUES(DEFAULT, "Question");
+INSERT INTO tag VALUES(1, "Question");
 INSERT INTO course VALUES(DEFAULT, "database og datamodellering", 'spring', true);
-INSERT INTO folder VALUES(DEFAULT, "folder3", 1);
-INSERT INTO folder VALUES(DEFAULT, "folder2", 1);
+INSERT INTO folder VALUES(DEFAULT, "Exam", 1);
+INSERT INTO folder VALUES(DEFAULT, "Midterm", 1);
 INSERT INTO post VALUES(DEFAULT, "beskrivelse", TRUE, NOW(), 'audunrb@icloud.com', NULL, NULL);
 INSERT INTO thread VALUES(DEFAULT, "tittel", 1 , 1);
 INSERT INTO post VALUES(DEFAULT, 'boyo', TRUE, NOW(), "erikpl@protonmail.com", 1, NULL);
