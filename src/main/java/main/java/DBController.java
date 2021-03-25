@@ -157,12 +157,13 @@ public class DBController {
 
     // Return -1 for exception
     // Return 0 for successful thread reply
-    public int replyToThreadAsInstructor(String postDescription, String email) {
+    public int replyToThreadAsInstructor(String postDescription) {
         try {
             // 1. create Post using postDescription and the postId + threadId stored as a class variable.
+            // CLI class makes sure currentUserEmail corresponds to the instructor email
             PreparedStatement createInstructorReplyQuery = this.connection.prepareStatement(String.format(
                     "INSERT INTO post (post_id, post_description, is_anonymous, last_edited, email, thread_id, self_post_id) " +
-                            "VALUES(DEFAULT, \"%s\", TRUE, NOW(), \"%s\", %s, %s);", postDescription, email, this.studentThreadId, this.studentPostId
+                            "VALUES(DEFAULT, \"%s\", TRUE, NOW(), \"%s\", %s, %s);", postDescription, this.currentUserEmail, this.studentThreadId, this.studentPostId
             ));
             createInstructorReplyQuery.executeUpdate();
             createInstructorReplyQuery.close();

@@ -36,7 +36,7 @@ public class CommandLineInterface {
 
         try {
             int useCase;
-            useCase = Integer.parseInt(this.reader.readLine());
+            useCase = Integer.parseInt(reader.readLine());
 
             if (useCase == 0) {
                 System.out.println("Exiting application...0");
@@ -100,7 +100,7 @@ public class CommandLineInterface {
     // TODO: implement
     private int handleLogin() {
         try {
-            this.dbController.userLogin(this.studentEmail, this.studentPassword);
+            dbController.userLogin(studentEmail, studentPassword);
             return 0;
         }
         catch (Exception e) {
@@ -111,13 +111,23 @@ public class CommandLineInterface {
 
     // A student makes a post belonging to the folder “Exam” and
     // tagged with “Question”.
-    // TODO: implement
+    // TODO: user feedback
     private int handleMakePost() {
         try {
-            // Check if current user is an instructor
-            if (this.dbController.getCurrentUserEmail().equals(this.instructorEmail)) {
-
+            // Check if the current user is an instructor
+            if (dbController.getCurrentUserEmail().equals(instructorEmail)) {
+                // Switch to student account to make post
+                dbController.userLogin(studentEmail, studentPassword);
             }
+            // Creates new post using hard-coded constants
+            dbController.newThreadAsStudent(examFolderId, postDescription, threadTitle, courseId, tagId);
+
+            return 0;
+        }
+
+        catch (Exception e) {
+            e.printStackTrace();
+            return -1;
         }
     }
 
@@ -125,10 +135,24 @@ public class CommandLineInterface {
     // An instructor replies to a post belonging to the folder
     // “Exam”. The input to this is the id of the post replied to.
     // This could be the post created in use case 2.
-    // TODO: implement
+    // TODO: user feedback
     private int handleInstructorReply() {
-        System.out.println("Replying as instructor...");
-        return 0;
+        try {
+            // Check if the current user is a student
+            if (dbController.getCurrentUserEmail().equals(studentEmail)) {
+                // Switch to instructor account
+                dbController.userLogin(instructorEmail, instructorPassword);
+            }
+
+            dbController.replyToThreadAsInstructor(replyDescription);
+
+            return 0;
+        }
+
+        catch (Exception e) {
+            e.printStackTrace();
+            return -1;
+        }
     }
 
     // A student searches for posts with a specific keyword “WAL”.
@@ -136,8 +160,16 @@ public class CommandLineInterface {
     // matching the keyword.
     // TODO: implement
     private int handlePostSearch() {
-        System.out.println("Searching post...");
-        return 0;
+        try {
+
+
+            return 0;
+        }
+
+        catch (Exception e) {
+            e.printStackTrace();
+            return -1;
+        }
     }
 
     // An instructor views statistics for users and how many post
