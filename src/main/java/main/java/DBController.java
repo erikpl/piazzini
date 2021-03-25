@@ -9,11 +9,7 @@ public class DBController {
     private int studentThreadId;
     private int studentPostId;
     private int instructorPostId;
-    private boolean studentThreadIsCreated = false;
 
-    public boolean isStudentThreadIsCreated() {
-        return studentThreadIsCreated;
-    }
 
     public String getCurrentUserEmail() {
         return currentUserEmail;
@@ -116,8 +112,6 @@ public class DBController {
         connection.commit();
         System.out.println("Put post in Exam folder...");
 
-        studentThreadIsCreated = true;
-
         // 7. create PostHasTag using the tagId and postId
         PreparedStatement setPostTagQuery = connection.prepareStatement(String.format(
                 "INSERT INTO post_has_tag (post_id, tag_id) " +
@@ -218,22 +212,3 @@ public class DBController {
         System.out.println("Done!");
     }
 }
-
-    /*
-    public static void main(String... args) {
-        DBController dbController = new DBController();
-        // 1: user login
-        dbController.userLogin("audunrb@icloud.com", "passord");
-        // 2: student question
-        dbController.newThreadAsStudent("1", "Hits for kids vol 32", "follow me on sc pls", "1", "1");
-        // 3: instructor answer
-        dbController.userLogin("erikpl@protonmail.com", "abc123");
-        dbController.replyToThreadAsInstructor("No MVDs!", "erikpl@protonmail.com");
-        // 4: student search
-        dbController.userLogin("audunrb@icloud.com", "passord");
-        dbController.searchForPostByKeyword("%WAL%");
-        // 5: user stats as professor
-        dbController.getUserStatisticsAsInstructor();
-    }
-}
-*/
