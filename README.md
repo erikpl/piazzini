@@ -27,7 +27,7 @@ Alternatively, you can perform all the necessary steps to run the application us
 mvn clean install exec:java -Dexec.mainClass=main.java.RunApp
 ```
 
-You may also need to add the JAR file located in ```lib/mysql-connector-java-8.0.16``` to the class path in order to successfully execute the application.
+You may also need to add the JAR file located in ```lib/mysql-connector-java-8.0.16``` to the class path.
 
 
 ## Documentation
