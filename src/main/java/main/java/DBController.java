@@ -97,7 +97,7 @@ public class DBController {
             System.out.println("\nCreated post with post ID: " + studentPostId);
         }
 
-        //retrievePostIdQuery.close();
+        retrievePostIdQuery.close();
 
         // 5. update the post_id of the created Thread to make the created post the main post.
 
