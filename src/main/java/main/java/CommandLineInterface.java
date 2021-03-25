@@ -72,7 +72,7 @@ public class CommandLineInterface {
     private int handleValidUseCase(int useCase) {
         // All common functionality for all use cases, such as database connection
         // TODO: Connect to database through controller
-        : Connect to database through controller
+        // Connect to database through controller
         if (useCase == 1) {
             return handleLogin();
         }
