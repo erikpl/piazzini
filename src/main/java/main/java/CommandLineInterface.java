@@ -72,6 +72,7 @@ public class CommandLineInterface {
     private int handleValidUseCase(int useCase) {
         // All common functionality for all use cases, such as database connection
         // TODO: Connect to database through controller
+        : Connect to database through controller
         if (useCase == 1) {
             return handleLogin();
         }
@@ -110,12 +111,12 @@ public class CommandLineInterface {
 
     // A student makes a post belonging to the folder “Exam” and
     // tagged with “Question”.
-    // TODO: user feedback
     private int handleMakePost() {
         try {
             // Check if the current user is an instructor
             if (dbController.getCurrentUserEmail().equals(instructorEmail)) {
                 // Switch to student account to make post
+                System.out.println("Switching to student account.");
                 dbController.userLogin(studentEmail, studentPassword);
             }
             // Creates new post using hard-coded constants
@@ -137,8 +138,7 @@ public class CommandLineInterface {
     // An instructor replies to a post belonging to the folder
     // “Exam”. The input to this is the id of the post replied to.
     // This could be the post created in use case 2.
-    //
-    // TODO: user feedback
+    
     private int handleInstructorReply() {
         if (!studentPostDone) {
             System.out.println("Cannot reply to a student post as an instructor before said post exists.");
@@ -149,6 +149,7 @@ public class CommandLineInterface {
             // Check if the current user is a student
             if (dbController.getCurrentUserEmail().equals(studentEmail)) {
                 // Switch to instructor account
+                System.out.println("Switching to instructor account.");
                 dbController.userLogin(instructorEmail, instructorPassword);
             }
 
