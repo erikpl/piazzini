@@ -94,7 +94,7 @@ public class DBController {
 
         while (retrievePostIdResult.next()) {
             studentPostId = retrievePostIdResult.getInt(1);
-            System.out.println("\nCreated post with post ID: " + "studentPostId.getInt("post_id")");
+            System.out.println("\nCreated post with post ID: " + studentPostId);
         }
 
         //retrievePostIdQuery.close();
