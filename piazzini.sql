@@ -1,26 +1,9 @@
-#Comment out create database and use database if database already exists
-#Uncomment drop tables if resetting the tables
-drop database piazzadatabase;
-create database piazzadatabase;
-use piazzadatabase;
+#Ignore drop, create and use if you are using schemas. Uncomment create and use for first time use of the database.
+#Uncomment drop database after first use if you wish to reset the database and tables.
+#drop database piazzini;
+#create database piazzini;
+#use piazzini;
 
-
-
-/*drop table gives_good_comment;
-drop table post_in_folder;
-drop table post_has_tag;
-drop table is_instructor;
-drop table tag_in_course;
-drop table main_post;
-drop table post_read;
-
-drop table post;
-drop table thread;
-drop table folder;
-drop table tag;
-drop table course;
-drop table piazza_user;
-*/
 CREATE TABLE piazza_user (
   email      		VARCHAR(50) NOT NULL,
   first_name 		TEXT NOT NULL,
@@ -71,14 +54,14 @@ CREATE TABLE post (
 			ON UPDATE CURRENT_TIMESTAMP NOT NULL,
   email			VARCHAR(50) NOT NULL,
   thread_id		INT UNSIGNED,
-  self_post_id		INT UNSIGNED,
+  ref_post_id		INT UNSIGNED,
   PRIMARY KEY (post_id),
   CONSTRAINT author FOREIGN KEY (email) 	
   REFERENCES piazza_user(email)
     ON DELETE CASCADE
     ON UPDATE CASCADE,
     
-  CONSTRAINT post_ref_post FOREIGN KEY (self_post_id)
+  CONSTRAINT post_ref_post FOREIGN KEY (ref_post_id)
   REFERENCES post(post_id)
     ON DELETE CASCADE
     ON UPDATE CASCADE,
@@ -231,42 +214,32 @@ INSERT INTO piazza_user VALUES("audunrb@icloud.com", "audun", "bøe", "passord")
 INSERT INTO piazza_user VALUES("erikpl@protonmail.com", "erik", "løvaas", "abc123");
 INSERT INTO piazza_user VALUES("amart@ladmail.com", "amar", "taso", "test123");
 INSERT INTO tag VALUES(DEFAULT, "Question");
-INSERT INTO course VALUES(DEFAULT, "database og datamodellering", 'spring', true);
-INSERT INTO folder VALUES(DEFAULT, "Exam", 1);
-INSERT INTO folder VALUES(DEFAULT, "Midterm", 1);
-INSERT INTO post VALUES(DEFAULT, "beskrivelse", TRUE, NOW(), 'audunrb@icloud.com', NULL, NULL);
-INSERT INTO thread VALUES(DEFAULT, "tittel", 1 , 1, NULL);
-INSERT INTO post VALUES(DEFAULT, 'boyo', TRUE, NOW(), "erikpl@protonmail.com", 1, NULL);
-INSERT INTO post VALUES(DEFAULT, 'boyos', TRUE, NOW(), "erikpl@protonmail.com", 1, 3);
-INSERT INTO post VALUES(DEFAULT, 'boyoso', TRUE, NOW(), "amart@ladmail.com", 1, NULL);
-INSERT INTO post VALUES(DEFAULT, 'boyosos', TRUE, NOW(), "amart@ladmail.com", NULL, 5);
-INSERT INTO thread VALUES(DEFAULT, "snap", 1, NULL, NULL);
-INSERT INTO thread VALUES(DEFAULT, "stop it", 1, 2, NULL);
-INSERT INTO thread VALUES(DEFAULT, "get some help", 1, 3, NULL);
-INSERT INTO gives_good_comment VALUES('audunrb@icloud.com', 2);
-INSERT INTO post_in_folder VALUES(2, 1);
-INSERT INTO post_has_tag VALUES(3, 1);
+INSERT INTO course VALUES(DEFAULT, "Data Modelling, Databases and Database Management Systems", 'spring', true);
 INSERT INTO is_instructor VALUES("erikpl@protonmail.com", 1);
 INSERT INTO tag_in_course VALUES(1, 1);
-INSERT INTO main_post VALUES(2, 2);
+INSERT INTO folder VALUES(DEFAULT, "Exam", 1);
+INSERT INTO folder VALUES(DEFAULT, "Midterm", 1);
+INSERT INTO thread VALUES(DEFAULT, "Title", 1 , NULL, NULL);
+INSERT INTO post VALUES(DEFAULT, "Question", TRUE, NOW(), 'audunrb@icloud.com', 1, NULL);
+INSERT INTO main_post VALUES(1, 1);
+INSERT INTO post_in_folder VALUES(1, 1);
+INSERT INTO post_has_tag VALUES(1, 1);
+INSERT INTO post VALUES(DEFAULT, 'Instructor answer', TRUE, NOW(), "erikpl@protonmail.com", 1, 1);
+UPDATE thread SET instructor_answer_id = 2 WHERE thread_id = 1;
+INSERT INTO post VALUES(DEFAULT, 'Comment', TRUE, NOW(), "audunrb@icloud.com", 1, NULL);
+INSERT INTO post VALUES(DEFAULT, 'Comment 2', TRUE, NOW(), "erikpl@protonmail.com", 1, NULL);
+INSERT INTO post VALUES(DEFAULT, 'Student answer', TRUE, NOW(), "amart@ladmail.com", 1, 1);
+UPDATE thread SET student_answer_id = 5 WHERE thread_id = 1;
+INSERT INTO gives_good_comment VALUES('audunrb@icloud.com', 2);
+INSERT INTO post_read VALUES("audunrb@icloud.com", 2);
+INSERT INTO post_read VALUES("audunrb@icloud.com", 5);
 INSERT INTO post_read VALUES("amart@ladmail.com", 1);
 INSERT INTO post_read VALUES("amart@ladmail.com", 2);
-INSERT INTO post_read VALUES("erikpl@protonmail.com", 4);
-INSERT INTO post_read VALUES("erikpl@protonmail.com", 5);
 INSERT INTO post_read VALUES("erikpl@protonmail.com", 1);
-INSERT INTO post_create VALUES("amart@ladmail.com", 4);
+INSERT INTO post_read VALUES("erikpl@protonmail.com", 3);
+INSERT INTO post_read VALUES("erikpl@protonmail.com", 5);
 INSERT INTO post_create VALUES("amart@ladmail.com", 5);
 INSERT INTO post_create VALUES("erikpl@protonmail.com", 2);
-INSERT INTO post_create VALUES("erikpl@protonmail.com", 3);
+INSERT INTO post_create VALUES("erikpl@protonmail.com", 4);
 INSERT INTO post_create VALUES("audunrb@icloud.com", 1);
-SELECT stat1.email,stat1.viewCount,stat2.createCount FROM (SELECT piazza_user.email, COUNT(post_read.post_ID) AS viewCount FROM piazza_user LEFT JOIN post_read ON piazza_user.email = post_read.email GROUP BY piazza_user.email) AS stat1 LEFT JOIN  (SELECT piazza_user.email, COUNT(post_create.post_id) AS createCount FROM piazza_user LEFT JOIN post_create ON piazza_user.email = post_create.email GROUP BY piazza_user.email) AS stat2 ON stat1.email = stat2.email ORDER BY viewCount DESC;
-INSERT INTO post VALUES(DEFAULT, 'sssss', TRUE, NOW(), "erikpl@protonmail.com", NULL, NULL);
-INSERT INTO thread VALUES(DEFAULT, "first", 1, NULL, NULL);
-INSERT INTO post VALUES(DEFAULT, "Exam answer", TRUE, NOW(), "erikpl@protonmail.com", 5, NULL);
-UPDATE thread SET instructor_answer_id = 7 WHERE thread_id = 5;
-INSERT INTO post_in_folder VALUES(7, 1);
-INSERT INTO main_post VALUES(5, 7);
-SELECT * FROM main_post;
-SELECT * FROM thread;
-INSERT INTO post VALUES(DEFAULT, 'BIGWALLE', TRUE, NOW(), 'amart@ladmail.com', 5, NULL);
-SELECT post_id from post where post.post_description like '%WAL%';
+INSERT INTO post_create VALUES("audunrb@icloud.com", 3);
