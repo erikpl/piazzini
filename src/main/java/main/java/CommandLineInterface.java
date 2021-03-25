@@ -59,6 +59,7 @@ public class CommandLineInterface {
         }
     }
 
+    // Prints out different user feedback for different unwanted events
     private int handleInvalidUseCase(boolean exception) {
         if (exception) {
             System.out.println("Something went wrong.");
@@ -69,10 +70,8 @@ public class CommandLineInterface {
         return -1;
     }
 
+    // Executes corresponding functions based on the selected use case
     private int handleValidUseCase(int useCase) {
-        // All common functionality for all use cases, such as database connection
-        // TODO: Connect to database through controller
-        // Connect to database through controller
         if (useCase == 1) {
             return handleLogin();
         }

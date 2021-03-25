@@ -39,6 +39,7 @@ public class DBController {
 
 
     public void userLogin(String email, String password) throws SQLException {
+        // Find users matching provided credentials
         PreparedStatement authQuery = connection.prepareStatement(String.format(
                 "SELECT email FROM piazza_user " +
                         "WHERE piazza_user.password=\"%s\" " +
@@ -46,6 +47,7 @@ public class DBController {
 
         ResultSet authResult = authQuery.executeQuery();
 
+        // If there exists a matching user
         if (authResult.next()) {
             currentUserEmail = authResult.getString("email");
             System.out.println("You are now logged in as " + currentUserEmail);
@@ -55,7 +57,6 @@ public class DBController {
 
     public void newThreadAsStudent(String examFolderId, String postDescription, String threadTitle, String courseId, String tagId) throws SQLException {
         // 1. create Thread with threadTitle and commit changes.
-
         PreparedStatement createThreadQuery = connection.prepareStatement(String.format(
                 "INSERT INTO thread (thread_id, title, course_id) " +
                         "VALUES(DEFAULT, \"%s\", %s);", threadTitle, courseId
@@ -66,7 +67,6 @@ public class DBController {
         System.out.println("Created thread...");
 
         // 2. retrieve threadId of the created thread (set automatically).
-
         PreparedStatement retrieveThreadIdQuery = connection.prepareStatement("SELECT LAST_INSERT_ID()");
         ResultSet retrieveThreadIdResult = retrieveThreadIdQuery.executeQuery();
 
@@ -146,11 +146,12 @@ public class DBController {
         createInstructorReplyQuery.close();
         connection.commit();
         System.out.println("Created instructor reply...");
+
         // 2. retrieve the post_id of the created instructor reply
         PreparedStatement retrievePostIdQuery = connection.prepareStatement("SELECT LAST_INSERT_ID()");
         ResultSet retrievePostIdResult = retrievePostIdQuery.executeQuery();
 
-
+        // Find the matching id from the query result
         while (retrievePostIdResult.next()) {
             instructorPostId = retrievePostIdResult.getInt(1);
             System.out.println("\nCreated instructor's answer to the thread with post_ID: " + instructorPostId);
@@ -177,7 +178,9 @@ public class DBController {
                         "WHERE post.post_description LIKE \"%s\";", keywordPattern
         ));
         ResultSet retrieveMatchingPostsResult = retrieveMatchingPostsQuery.executeQuery();
+
         // 2. Print out all matching results
+        // Counter = result number
         int counter = 1;
         while (retrieveMatchingPostsResult.next()) {
             // 3. Format: Search result number x: post_id
