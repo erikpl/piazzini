@@ -72,7 +72,7 @@ public class DBController {
 
         while (retrieveThreadIdResult.next()) {
             studentThreadId = retrieveThreadIdResult.getInt(1);
-            System.out.println("\nCreated thread with thread ID: " + retrieveThreadId.getInt("thread_id"));
+            System.out.println("\nCreated thread with thread ID: " + studentThreadId);
         }
         retrieveThreadIdQuery.close();
 
@@ -153,7 +153,7 @@ public class DBController {
 
         while (retrievePostIdResult.next()) {
             instructorPostId = retrievePostIdResult.getInt(1);
-            System.out.println("\nCreated instructor's answer to the thread with post_ID: " + instructorPostId.getInt("post_id"));
+            System.out.println("\nCreated instructor's answer to the thread with post_ID: " + instructorPostId);
         }
         retrievePostIdQuery.close();
 
