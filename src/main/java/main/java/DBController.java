@@ -72,6 +72,7 @@ public class DBController {
 
         while (retrieveThreadIdResult.next()) {
             studentThreadId = retrieveThreadIdResult.getInt(1);
+            System.out.println("\nCreated thread with thread ID: " + retrieveThreadId.getInt("thread_id"));
         }
         retrieveThreadIdQuery.close();
 
@@ -93,6 +94,7 @@ public class DBController {
 
         while (retrievePostIdResult.next()) {
             studentPostId = retrievePostIdResult.getInt(1);
+            System.out.println("\nCreated post with post ID: " + "studentPostId.getInt("post_id")");
         }
 
         //retrievePostIdQuery.close();
@@ -100,7 +102,7 @@ public class DBController {
         // 5. update the post_id of the created Thread to make the created post the main post.
 
         PreparedStatement setMainPostQuery = connection.prepareStatement(String.format(
-                "INSERT INTO main_post (thread_id, post_id) " +
+            "INSERT INTO main_post (thread_id, post_id) " +
                         "VALUES(%s, %s);", studentThreadId, studentPostId)
         );
         setMainPostQuery.executeUpdate();
@@ -151,6 +153,7 @@ public class DBController {
 
         while (retrievePostIdResult.next()) {
             instructorPostId = retrievePostIdResult.getInt(1);
+            System.out.println("\nCreated instructor's answer to the thread with post_ID: " + instructorPostId.getInt("post_id"));
         }
         retrievePostIdQuery.close();
 
@@ -207,9 +210,11 @@ public class DBController {
             String email = retrieveStatisticsResult.getString("email");
             int viewCount = retrieveStatisticsResult.getInt("viewCount");
             int createCount = retrieveStatisticsResult.getInt("createCount");
-            System.out.println("\nUser: " + email);
-            System.out.println("Posts viewed: " + viewCount);
-            System.out.println("Posts created: " + createCount + "\n");
+            System.out.println("\n\n---------------------------------------------------------");
+            System.out.println("\nUser:           " + "email" + "\n");
+            System.out.println("Posts viewed:   " + "viewCount" + "\n");
+            System.out.println("Posts created:  " + "createCount" + "\n");
+            System.out.println("---------------------------------------------------------\n\n");
         }
 
         retrieveStatisticsQuery.close();
