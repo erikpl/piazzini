@@ -227,7 +227,7 @@ INSERT INTO post_has_tag VALUES(1, 1);
 INSERT INTO post VALUES(DEFAULT, 'Instructor answer', TRUE, NOW(), "erikpl@protonmail.com", 1, 1);
 UPDATE thread SET instructor_answer_id = 2 WHERE thread_id = 1;
 INSERT INTO post VALUES(DEFAULT, 'Comment', TRUE, NOW(), "audunrb@icloud.com", 1, NULL);
-INSERT INTO post VALUES(DEFAULT, 'Comment 2', TRUE, NOW(), "erikpl@protonmail.com", 1, NULL);
+INSERT INTO post VALUES(DEFAULT, 'CommentWALLE 2', TRUE, NOW(), "erikpl@protonmail.com", 1, NULL);
 INSERT INTO post VALUES(DEFAULT, 'Student answer', TRUE, NOW(), "amart@ladmail.com", 1, 1);
 UPDATE thread SET student_answer_id = 5 WHERE thread_id = 1;
 INSERT INTO gives_good_comment VALUES('audunrb@icloud.com', 2);
