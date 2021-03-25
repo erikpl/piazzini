@@ -5,11 +5,19 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 
 public class CommandLineInterface {
-    private String current_user_email;
-    private String current_course_id;
-    // Update this attribute when either email or course_id change
-    private boolean isInstructor;
     private BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
+    private DBController dbController = new DBController();
+    private String studentEmail = "audunrb@icloud.com";
+    private String studentPassword = "passord";
+    private String instructorEmail = "erikpl@protonmail.com";
+    private String instructorPassword = "abc123";
+    private String examFolderId = "1";
+    private String courseId = "1";
+    private String tagId = "1";
+    private String postDescription = "Hello! Can you pls explain 4NF? Don't get it :(";
+    private String threadTitle = "Q: Stuck on 4NF";
+    private String replyDescription = "No MVDs!";
+    private String keywordPattern = "%WAL%";
 
     // Return 0 for OK
     // Return -1 for invalid
@@ -69,7 +77,7 @@ public class CommandLineInterface {
         }
 
         if (useCase == 2) {
-            handleMakePost();
+            //handleMakePost();
         }
 
         if (useCase == 3) {
@@ -87,19 +95,32 @@ public class CommandLineInterface {
 
     // A student logs into the system, i.e., check user name
     // and password. No encryption.
+    // Return 0 for successful login.
+    // Return -1 for exception
     // TODO: implement
     private int handleLogin() {
-        System.out.println("Handling login...");
-        return 0;
+        try {
+            this.dbController.userLogin(this.studentEmail, this.studentPassword);
+            return 0;
+        }
+        catch (Exception e) {
+            return -1;
+        }
     }
+
 
     // A student makes a post belonging to the folder “Exam” and
     // tagged with “Question”.
     // TODO: implement
     private int handleMakePost() {
-        System.out.println("Creating post...");
-        return 0;
+        try {
+            // Check if current user is an instructor
+            if (this.dbController.getCurrentUserEmail().equals(this.instructorEmail)) {
+
+            }
+        }
     }
+
 
     // An instructor replies to a post belonging to the folder
     // “Exam”. The input to this is the id of the post replied to.
