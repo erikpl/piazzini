@@ -2,13 +2,32 @@
 Database project for TDT4145 Data Modelling, Databases and Database Management Systems
 
 
-## Setup
+## Database setup
 1.	Choose whether you wish to create schema or use “create database” method.
 2.	If you choose “create database” uncomment create database and use database. If you wish to alter entries in the database, simply uncomment drop database for every subsequent use.
 3.	If you wish to use schemas find them in MySQL navigator. Right click on the empty field under the default schemas already existing (usually only consists of the “sys” schema) and choose to create new schema.
 4.	Call the new schema “piazzini”, press apply and finish. A new schema called “piazzini” should show up in the schema’s navigator. Right click the new schema and set as default schema.
 5.	You can now run the database, set up the tables and populate them with the queries at the bottom of the database. Remember to leave the “drop database”, “create database” and “use database” commented if you are using a schema for the first time, then you can uncomment if you wish to drop the tables and rebuild them.
 6.	The instructor user is already setup as erikpl@protonmail.com with the password “abc123”.
+
+
+## Building and running the project
+1. Build the JAR using the following Maven command:
+```
+mvn clean package
+```
+
+2. Run the JAR:
+```
+java -jar target/piazzini.jar
+```
+
+Alternatively, you can perform all the necessary steps to run the application using the following Maven command:
+```
+mvn clean install exec:java -Dexec.mainClass=main.java.RunApp
+```
+
+You may also need to add the JAR file located in ```lib/mysql-connector-java-8.0.16``` to the class path in order to successfully execute the application.
 
 
 ## Documentation
