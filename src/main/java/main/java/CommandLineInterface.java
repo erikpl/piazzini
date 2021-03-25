@@ -5,19 +5,19 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 
 public class CommandLineInterface {
-    private BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
-    private DBController dbController = new DBController();
-    private String studentEmail = "audunrb@icloud.com";
-    private String studentPassword = "passord";
-    private String instructorEmail = "erikpl@protonmail.com";
-    private String instructorPassword = "abc123";
-    private String examFolderId = "1";
-    private String courseId = "1";
-    private String tagId = "1";
-    private String postDescription = "Hello! Can you pls explain 4NF? Don't get it :(";
-    private String threadTitle = "Q: Stuck on 4NF";
-    private String replyDescription = "No MVDs!";
-    private String keywordPattern = "%WAL%";
+    private final BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
+    private final DBController dbController = new DBController();
+    private final String studentEmail = "audunrb@icloud.com";
+    private final String studentPassword = "passord";
+    private final String instructorEmail = "erikpl@protonmail.com";
+    private final String instructorPassword = "abc123";
+    private final String examFolderId = "1";
+    private final String courseId = "1";
+    private final String tagId = "1";
+    private final String postDescription = "Hello! Can you pls explain 4NF? Don't get it :(";
+    private final String threadTitle = "Q: Stuck on 4NF";
+    private final String replyDescription = "No MVDs!";
+    private final String keywordPattern = "%WAL%";
     private boolean studentPostDone = false;
 
     // Return 0 for OK
@@ -32,7 +32,7 @@ public class CommandLineInterface {
                 + "\n3: Reply to post as an instructor."
                 + "\n4: Search for posts as a student."
                 + "\n5: View user statistics as an instructor."
-                + "\nPress 0 to quit.\n"
+                + "\nWrite 0 to quit.\n"
         );
 
         try {
@@ -40,7 +40,7 @@ public class CommandLineInterface {
             useCase = Integer.parseInt(reader.readLine());
 
             if (useCase == 0) {
-                System.out.println("Exiting application...0");
+                System.out.println("Exiting application...");
                 return 1;
             }
 
@@ -121,7 +121,7 @@ public class CommandLineInterface {
             // Creates new post using hard-coded constants
             dbController.newThreadAsStudent(examFolderId, postDescription, threadTitle, courseId, tagId);
 
-            // Reply can only be
+            // Reply can only be posted if the original posts exists
             studentPostDone = true;
 
             return 0;
@@ -140,6 +140,11 @@ public class CommandLineInterface {
     //
     // TODO: user feedback
     private int handleInstructorReply() {
+        if (!studentPostDone) {
+            System.out.println("Cannot reply to a student post as an instructor before said post exists.");
+            return -1;
+
+        }
         try {
             // Check if the current user is a student
             if (dbController.getCurrentUserEmail().equals(studentEmail)) {
@@ -162,8 +167,11 @@ public class CommandLineInterface {
     // The return value of this should be a list of ids of posts
     // matching the keyword.
     private int handlePostSearch() {
+
         try {
+            System.out.println("Searching for posts containing the keyword \"WAL\"");
             dbController.searchForPostByKeyword(keywordPattern);
+            System.out.println("Done!\n");
 
             return 0;
         }

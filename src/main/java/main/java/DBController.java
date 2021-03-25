@@ -39,15 +39,15 @@ public class DBController {
 
 
     public void userLogin(String email, String password) throws SQLException {
-        PreparedStatement query = connection.prepareStatement(String.format(
+        PreparedStatement authQuery = connection.prepareStatement(String.format(
                 "SELECT email FROM piazza_user " +
                         "WHERE piazza_user.password=\"%s\" " +
                         "AND piazza_user.email=\"%s\";", password, email));
 
-        ResultSet queryResult = query.executeQuery();
+        ResultSet authResult = authQuery.executeQuery();
 
-        if (queryResult.next()) {
-            currentUserEmail = queryResult.getString("email");
+        if (authResult.next()) {
+            currentUserEmail = authResult.getString("email");
             System.out.println("You are now logged in as " + currentUserEmail);
         }
     }
@@ -55,6 +55,7 @@ public class DBController {
 
     public void newThreadAsStudent(String examFolderId, String postDescription, String threadTitle, String courseId, String tagId) throws SQLException {
         // 1. create Thread with threadTitle and commit changes.
+
         PreparedStatement createThreadQuery = connection.prepareStatement(String.format(
                 "INSERT INTO thread (thread_id, title, course_id) " +
                         "VALUES(DEFAULT, \"%s\", %s);", threadTitle, courseId
@@ -65,6 +66,7 @@ public class DBController {
         System.out.println("Created thread...");
 
         // 2. retrieve threadId of the created thread (set automatically).
+
         PreparedStatement retrieveThreadIdQuery = connection.prepareStatement("SELECT LAST_INSERT_ID()");
         ResultSet retrieveThreadIdResult = retrieveThreadIdQuery.executeQuery();
 
@@ -74,6 +76,7 @@ public class DBController {
         retrieveThreadIdQuery.close();
 
         // 3. create Post using threadId and postDescription. Last_edited auto-update.
+
         PreparedStatement makePostQuery = connection.prepareStatement(String.format(
                 "INSERT INTO post (post_id, post_description, is_anonymous, last_edited, email, thread_id, self_post_id) " +
                         "VALUES(DEFAULT, \"%s\", TRUE, NOW(), \"%s\", %s, NULL);", postDescription, currentUserEmail, studentThreadId
@@ -84,15 +87,18 @@ public class DBController {
         System.out.println("Created main post for thread...");
 
         // 4. retrieve post_id of created Post.
+
         PreparedStatement retrievePostIdQuery = connection.prepareStatement("SELECT LAST_INSERT_ID()");
         ResultSet retrievePostIdResult = retrievePostIdQuery.executeQuery();
 
         while (retrievePostIdResult.next()) {
             studentPostId = retrievePostIdResult.getInt(1);
         }
-        retrievePostIdQuery.close();
+
+        //retrievePostIdQuery.close();
 
         // 5. update the post_id of the created Thread to make the created post the main post.
+
         PreparedStatement setMainPostQuery = connection.prepareStatement(String.format(
                 "INSERT INTO main_post (thread_id, post_id) " +
                         "VALUES(%s, %s);", studentThreadId, studentPostId)
@@ -120,9 +126,10 @@ public class DBController {
         setPostTagQuery.executeUpdate();
         setMainPostQuery.close();
         connection.commit();
+
         System.out.println("Assigned \"Question\" tag to post...");
 
-        System.out.println("Done!");
+        System.out.println("Done!\n");
     }
 
 
@@ -135,12 +142,12 @@ public class DBController {
         ));
         createInstructorReplyQuery.executeUpdate();
         createInstructorReplyQuery.close();
-        System.out.println("Creating instructor reply...");
         connection.commit();
-
+        System.out.println("Created instructor reply...");
         // 2. retrieve the post_id of the created instructor reply
         PreparedStatement retrievePostIdQuery = connection.prepareStatement("SELECT LAST_INSERT_ID()");
         ResultSet retrievePostIdResult = retrievePostIdQuery.executeQuery();
+
 
         while (retrievePostIdResult.next()) {
             instructorPostId = retrievePostIdResult.getInt(1);
@@ -154,8 +161,9 @@ public class DBController {
         setPostAsInstructorAnswerQuery.executeUpdate();
         setPostAsInstructorAnswerQuery.close();
         connection.commit();
+
         System.out.println("Assigns post as the thread's Instructor's answer...");
-        System.out.println("Done!");
+        System.out.println("\nDone!");
     }
 
 
@@ -166,7 +174,6 @@ public class DBController {
                         "WHERE post.post_description LIKE \"%s\";", keywordPattern
         ));
         ResultSet retrieveMatchingPostsResult = retrieveMatchingPostsQuery.executeQuery();
-
         // 2. Print out all matching results
         int counter = 1;
         while (retrieveMatchingPostsResult.next()) {
@@ -176,8 +183,6 @@ public class DBController {
         }
 
         retrieveMatchingPostsQuery.close();
-
-        System.out.println("Done!");
     }
 
 
@@ -209,6 +214,6 @@ public class DBController {
 
         retrieveStatisticsQuery.close();
 
-        System.out.println("Done!");
+        System.out.println("\nDone!");
     }
 }
