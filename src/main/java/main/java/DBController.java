@@ -8,15 +8,24 @@ import java.util.Properties;
 
 public class DBController {
     private Connection connection;
-    private String current_user_email;
+    private String currentUserEmail;
     private int studentThreadId;
     private int studentPostId;
     private int instructorPostId;
-    public boolean studentThreadIsCreated = false;
+    private boolean studentThreadIsCreated = false;
+
+    public boolean isStudentThreadIsCreated() {
+        return studentThreadIsCreated;
+    }
+
+    public String getCurrentUserEmail() {
+        return currentUserEmail;
+    }
     // Instructor privileges are managed in the CLI class
 
     // Empty constructor
     public DBController() {
+        connect();
     }
 
     // Method for connecting to the MySQL server
@@ -26,7 +35,8 @@ public class DBController {
             Properties credentials = new Properties();
             credentials.put("user", "root");
             credentials.put("password", "12345678");
-            connection = DriverManager.getConnection("jdbc:mysql://127.0.0.1:3306/piazzini?allowPublicKeyRetrieval=true&autoReconnect=true&useSSL=false",credentials);
+            this.connection = DriverManager.getConnection("jdbc:mysql://127.0.0.1:3306/piazzini?allowPublicKeyRetrieval=true&autoReconnect=true&useSSL=false", credentials);
+            this.connection.setAutoCommit(false);
         }
         // If unable to connect to the MySQL server
         catch (Exception e) {
@@ -37,28 +47,24 @@ public class DBController {
     // Return -1 for exception
     // Return 0 for successful login
     // Return 1 for invalid credentials
-    // TODO: test method
     public int userLogin(String email, String password) {
         try {
-            PreparedStatement query = this.connection.prepareStatement(String.format(
+           PreparedStatement query = this.connection.prepareStatement(String.format(
                     "SELECT email FROM piazza_user " +
-                    "WHERE piazza_user.password=%s " +
-                    "AND piazza_user.email=%s;", password, email));
+                            "WHERE piazza_user.password=\"%s\" " +
+                            "AND piazza_user.email=\"%s\";", password, email));
 
             ResultSet queryResult = query.executeQuery();
 
             if (queryResult.next()) {
-                this.current_user_email = queryResult.getString("email");
-                System.out.println("You are now logged in as " + this.current_user_email);
+                this.currentUserEmail = queryResult.getString("email");
+                System.out.println("You are now logged in as " + this.currentUserEmail);
                 return 0;
-            }
-            else {
+            } else {
                 System.out.println("The username and/or password is wrong. Please try again.");
                 return 1;
             }
-        }
-
-        catch (Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
             return -1;
         }
@@ -66,16 +72,18 @@ public class DBController {
 
     // Return -1 for exception
     // Return 0 for successful thread creation
-    public int newThreadAsStudent(String examFolderId, String postDescription, String threadTitle, String courseId) {
+    // TODO: fix ugly code lel
+    public int newThreadAsStudent(String examFolderId, String postDescription, String threadTitle, String courseId, String tagId) {
         try {
             // 1. create Thread with threadTitle and commit changes.
             PreparedStatement createThreadQuery = this.connection.prepareStatement(String.format(
                     "INSERT INTO thread (thread_id, title, course_id) " +
-                            "VALUES(DEFAULT, %s, %s);", threadTitle, courseId
+                            "VALUES(DEFAULT, \"%s\", %s);", threadTitle, courseId
             ));
             createThreadQuery.executeUpdate();
             createThreadQuery.close();
             this.connection.commit();
+            System.out.println("Created thread...");
 
             // 2. retrieve threadId of the created thread (set automatically).
             PreparedStatement retrieveThreadIdQuery = this.connection.prepareStatement("SELECT LAST_INSERT_ID()");
@@ -89,11 +97,12 @@ public class DBController {
             // 3. create Post using threadId and postDescription. Last_edited auto-update.
             PreparedStatement makePostQuery = this.connection.prepareStatement(String.format(
                     "INSERT INTO post (post_id, post_description, is_anonymous, last_edited, email, thread_id, self_post_id) " +
-                            "VALUES(DEFAULT, %s, TRUE, NOW(), %s, %s, NULL);", postDescription, current_user_email, String.valueOf(studentThreadId)
+                            "VALUES(DEFAULT, \"%s\", TRUE, NOW(), \"%s\", %s, NULL);", postDescription, currentUserEmail, String.valueOf(studentThreadId)
             ));
             makePostQuery.executeUpdate();
             makePostQuery.close();
             this.connection.commit();
+            System.out.println("Created main post for thread...");
 
             // 4. retrieve post_id of created Post.
             PreparedStatement retrievePostIdQuery = this.connection.prepareStatement("SELECT LAST_INSERT_ID()");
@@ -112,27 +121,40 @@ public class DBController {
             setMainPostQuery.executeUpdate();
             setMainPostQuery.close();
             this.connection.commit();
+            System.out.println("Connected post to thread...");
 
             // 6. create PostInFolder using the folderId and postId.
             PreparedStatement setPostFolderQuery = this.connection.prepareStatement(String.format(
                     "INSERT INTO post_in_folder (post_id, folder_id) "
-                    + "VALUES(%s, %s);", String.valueOf(this.studentPostId), String.valueOf(examFolderId)
+                            + "VALUES(%s, %s);", this.studentPostId, examFolderId
             ));
             setPostFolderQuery.executeUpdate();
             setPostFolderQuery.close();
             this.connection.commit();
+            System.out.println("Put post in Exam folder...");
 
             this.studentThreadIsCreated = true;
 
+            // 7. create PostHasTag using the tagId and postId
+            PreparedStatement setPostTagQuery = this.connection.prepareStatement(String.format(
+                    "INSERT INTO post_has_tag (post_id, tag_id) " +
+                            "VALUES (%s, %s);", this.studentPostId, tagId
+            ));
+            setPostTagQuery.executeUpdate();
+            setMainPostQuery.close();
+            this.connection.commit();
+            System.out.println("Assigned \"Question\" tag to post...");
+
+            System.out.println("Done!");
             return 0;
         }
+
         catch (Exception e) {
             e.printStackTrace();
             return -1;
         }
     }
 
-    // TODO: implement
     // Return -1 for exception
     // Return 0 for successful thread reply
     public int replyToThreadAsInstructor(String postDescription, String email) {
@@ -140,10 +162,11 @@ public class DBController {
             // 1. create Post using postDescription and the postId + threadId stored as a class variable.
             PreparedStatement createInstructorReplyQuery = this.connection.prepareStatement(String.format(
                     "INSERT INTO post (post_id, post_description, is_anonymous, last_edited, email, thread_id, self_post_id) " +
-                            "VALUES(DEFAULT, %s, TRUE, NOW(), %s, %s, %s);", postDescription, email, String.valueOf(this.studentThreadId), String.valueOf(this.studentPostId)
+                            "VALUES(DEFAULT, \"%s\", TRUE, NOW(), \"%s\", %s, %s);", postDescription, email, this.studentThreadId, this.studentPostId
             ));
             createInstructorReplyQuery.executeUpdate();
             createInstructorReplyQuery.close();
+            System.out.println("Creating instructor reply...");
             this.connection.commit();
 
             // 2. retrieve the post_id of the created instructor reply
@@ -157,12 +180,13 @@ public class DBController {
 
             // 3. set created Post as Instructor's answer (Thread attribute).
             PreparedStatement setPostAsInstructorAnswerQuery = this.connection.prepareStatement(String.format(
-                    "UPDATE thread SET instructor_answer_id = %s WHERE thread_id = %s;", String.valueOf(this.instructorPostId), String.valueOf(this.studentThreadId)
+                    "UPDATE thread SET instructor_answer_id = %s WHERE thread_id = %s;", this.instructorPostId, this.studentThreadId
             ));
             setPostAsInstructorAnswerQuery.executeUpdate();
             setPostAsInstructorAnswerQuery.close();
             this.connection.commit();
-
+            System.out.println("Assigns post as the thread's Instructor's answer...");
+            System.out.println("Done!");
             return 0;
         }
 
@@ -180,7 +204,7 @@ public class DBController {
             // 1. Retrieve all matching posts using the LIKE operator
             PreparedStatement retrieveMatchingPostsQuery = this.connection.prepareStatement(String.format(
                     "SELECT post_id FROM post " +
-                            "WHERE post.post_description LIKE %s;", keywordPattern
+                            "WHERE post.post_description LIKE \"%s\";", keywordPattern
             ));
             ResultSet retrieveMatchingPostsResult = retrieveMatchingPostsQuery.executeQuery();
 
@@ -188,11 +212,13 @@ public class DBController {
             int counter = 1;
             while (retrieveMatchingPostsResult.next()) {
                 // 3. Format: Search result number x: post_id
-                System.out.println("\nSearch result number" + String.valueOf(counter) + ":\t" + String.valueOf(retrieveMatchingPostsResult.getInt("post_id")));
+                System.out.println("\nSearch result number " + counter + ":\t" + "post id=" + retrieveMatchingPostsResult.getInt("post_id"));
                 counter++;
             }
 
             retrieveMatchingPostsQuery.close();
+
+            System.out.println("Done!");
 
             return 0;
         }
@@ -221,25 +247,46 @@ public class DBController {
 
             ResultSet retrieveStatisticsResult = retrieveStatisticsQuery.executeQuery();
 
+            System.out.println("User statistics:");
             // 2. Print out each user's email, view count and create count
             while (retrieveStatisticsResult.next()) {
                 String email = retrieveStatisticsResult.getString("email");
                 int viewCount = retrieveStatisticsResult.getInt("viewCount");
                 int createCount = retrieveStatisticsResult.getInt("createCount");
-                System.out.println("\nUser: " + email + ".");
-                System.out.println("\nPosts viewed: " + viewCount);
-                System.out.println("\nPosts created: " + createCount + "\n");
+                System.out.println("\nUser: " + email);
+                System.out.println("Posts viewed: " + viewCount);
+                System.out.println("Posts created: " + createCount + "\n");
             }
 
             retrieveStatisticsQuery.close();
 
+            System.out.println("Done!");
+
             return 0;
         }
+
         catch (Exception e) {
             e.printStackTrace();
             return -1;
         }
     }
+
+    public static void main(String... args) {
+        DBController dbController = new DBController();
+        // 1: user login
+        dbController.userLogin("audunrb@icloud.com", "passord");
+        // 2: student question
+        dbController.newThreadAsStudent("1", "Hits for kids vol 32", "follow me on sc pls", "1", "1");
+        // 3: instructor answer
+        dbController.userLogin("erikpl@protonmail.com", "abc123");
+        dbController.replyToThreadAsInstructor("No MVDs!", "erikpl@protonmail.com");
+        // 4: student search
+        dbController.userLogin("audunrb@icloud.com", "passord");
+        dbController.searchForPostByKeyword("%WAL%");
+        // 5: user stats as professor
+        dbController.getUserStatisticsAsInstructor();
+    }
+}
     /*
     private boolean isInstructor(String email) {
         try {
@@ -264,5 +311,5 @@ public class DBController {
             System.out.println("Could not verify instructor status of " + email + ".");
         }
      */
-    }
-}
+
+
