@@ -5,19 +5,20 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 
 public class CommandLineInterface {
-    private BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
-    private DBController dbController = new DBController();
-    private String studentEmail = "audunrb@icloud.com";
-    private String studentPassword = "passord";
-    private String instructorEmail = "erikpl@protonmail.com";
-    private String instructorPassword = "abc123";
-    private String examFolderId = "1";
-    private String courseId = "1";
-    private String tagId = "1";
-    private String postDescription = "Hello! Can you pls explain 4NF? Don't get it :(";
-    private String threadTitle = "Q: Stuck on 4NF";
-    private String replyDescription = "No MVDs!";
-    private String keywordPattern = "%WAL%";
+    private final BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
+    private final DBController dbController = new DBController();
+    private final String studentEmail = "audunrb@icloud.com";
+    private final String studentPassword = "passord";
+    private final String instructorEmail = "erikpl@protonmail.com";
+    private final String instructorPassword = "abc123";
+    private final String examFolderId = "1";
+    private final String courseId = "1";
+    private final String tagId = "1";
+    private final String postDescription = "Hello! Can you pls explain 4NF? Don't get it :(";
+    private final String threadTitle = "Q: Stuck on 4NF";
+    private final String replyDescription = "No MVDs!";
+    private final String keywordPattern = "%WAL%";
+    private boolean studentPostDone = false;
 
     // Return 0 for OK
     // Return -1 for invalid
@@ -31,7 +32,7 @@ public class CommandLineInterface {
                 + "\n3: Reply to post as an instructor."
                 + "\n4: Search for posts as a student."
                 + "\n5: View user statistics as an instructor."
-                + "\nPress 0 to quit.\n"
+                + "\nWrite 0 to quit.\n"
         );
 
         try {
@@ -39,13 +40,12 @@ public class CommandLineInterface {
             useCase = Integer.parseInt(reader.readLine());
 
             if (useCase == 0) {
-                System.out.println("Exiting application...0");
+                System.out.println("Exiting application...");
                 return 1;
             }
 
             else if (useCase >= 1 && useCase <= 5) {
-                handleValidUseCase(useCase);
-                return 0;
+                return handleValidUseCase(useCase);
             }
 
             else {
@@ -69,35 +69,34 @@ public class CommandLineInterface {
         return -1;
     }
 
-    private void handleValidUseCase(int useCase) {
+    private int handleValidUseCase(int useCase) {
         // All common functionality for all use cases, such as database connection
         // TODO: Connect to database through controller
         if (useCase == 1) {
-            handleLogin();
+            return handleLogin();
         }
 
-        if (useCase == 2) {
-            //handleMakePost();
+        else if (useCase == 2) {
+            return handleMakePost();
         }
 
-        if (useCase == 3) {
-            handleInstructorReply();
+        else if (useCase == 3) {
+            return handleInstructorReply();
         }
 
-        if (useCase == 4) {
-            handlePostSearch();
+        else if (useCase == 4) {
+            return handlePostSearch();
         }
 
-        if (useCase == 5) {
-            handleViewStatistics();
+        // useCase == 5
+        else {
+            return handleViewStatistics();
         }
+
     }
 
     // A student logs into the system, i.e., check user name
     // and password. No encryption.
-    // Return 0 for successful login.
-    // Return -1 for exception
-    // TODO: implement
     private int handleLogin() {
         try {
             dbController.userLogin(studentEmail, studentPassword);
@@ -122,6 +121,9 @@ public class CommandLineInterface {
             // Creates new post using hard-coded constants
             dbController.newThreadAsStudent(examFolderId, postDescription, threadTitle, courseId, tagId);
 
+            // Reply can only be posted if the original posts exists
+            studentPostDone = true;
+
             return 0;
         }
 
@@ -135,8 +137,14 @@ public class CommandLineInterface {
     // An instructor replies to a post belonging to the folder
     // “Exam”. The input to this is the id of the post replied to.
     // This could be the post created in use case 2.
+    //
     // TODO: user feedback
     private int handleInstructorReply() {
+        if (!studentPostDone) {
+            System.out.println("Cannot reply to a student post as an instructor before said post exists.");
+            return -1;
+
+        }
         try {
             // Check if the current user is a student
             if (dbController.getCurrentUserEmail().equals(studentEmail)) {
@@ -158,10 +166,12 @@ public class CommandLineInterface {
     // A student searches for posts with a specific keyword “WAL”.
     // The return value of this should be a list of ids of posts
     // matching the keyword.
-    // TODO: implement
     private int handlePostSearch() {
-        try {
 
+        try {
+            System.out.println("Searching for posts containing the keyword \"WAL\"");
+            dbController.searchForPostByKeyword(keywordPattern);
+            System.out.println("Done!\n");
 
             return 0;
         }
@@ -174,19 +184,21 @@ public class CommandLineInterface {
 
     // An instructor views statistics for users and how many post
     // they have read and how
-    // TODO: implement
     private int handleViewStatistics() {
-        System.out.println("Viewing stats...");
-        return 0;
-    }
+        try {
+            // Check if the current user is a student
+            if (dbController.getCurrentUserEmail().equals(studentEmail)) {
+                // Switch to instructor account
+                dbController.userLogin(instructorEmail, instructorPassword);
+            }
+            dbController.getUserStatisticsAsInstructor();
 
-    // TODO: implement similar functionality in a dedicated class
-    public static void main(String... args) {
-        int state = 0;
-        CommandLineInterface cli = new CommandLineInterface();
+            return 0;
+        }
 
-        while (state == 0 || state == -1) {
-            state = cli.selectUseCase();
+        catch (Exception e) {
+            e.printStackTrace();
+            return -1;
         }
     }
 }
