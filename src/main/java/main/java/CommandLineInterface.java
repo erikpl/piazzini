@@ -11,8 +11,9 @@ public class CommandLineInterface {
     private String studentPassword = "passord";
     private String instructorEmail = "erikpl@protonmail.com";
     private String instructorPassword = "abc123";
-    private int examFolderId = 1;
-    private int courseId = 1;
+    private String examFolderId = "1";
+    private String courseId = "1";
+    private String tagId = "1";
     private String postDescription = "Hello! Can you pls explain 4NF? Don't get it :(";
     private String threadTitle = "Q: Stuck on 4NF";
     private String replyDescription = "No MVDs!";
@@ -76,7 +77,7 @@ public class CommandLineInterface {
         }
 
         if (useCase == 2) {
-            handleMakePost();
+            //handleMakePost();
         }
 
         if (useCase == 3) {
@@ -107,14 +108,19 @@ public class CommandLineInterface {
         }
     }
 
+
     // A student makes a post belonging to the folder “Exam” and
     // tagged with “Question”.
     // TODO: implement
     private int handleMakePost() {
         try {
+            // Check if current user is an instructor
+            if (this.dbController.getCurrentUserEmail().equals(this.instructorEmail)) {
 
+            }
         }
     }
+
 
     // An instructor replies to a post belonging to the folder
     // “Exam”. The input to this is the id of the post replied to.
